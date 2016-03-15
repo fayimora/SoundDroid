@@ -1,9 +1,5 @@
 package com.fayimora.sounddroid;
 
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by fayimora on 15/03/2016.
@@ -35,15 +31,5 @@ public class Track {
 
   public void setTitle(String title) {
     this.title = title;
-  }
-
-  public static Track parse(JSONObject jsonObject) {
-    Track t = new Track();
-    try {
-      t.setTitle(jsonObject.getString("title"));
-    } catch (JSONException e) {
-      Log.e("Track", e.getMessage());
-    }
-    return t;
   }
 }
