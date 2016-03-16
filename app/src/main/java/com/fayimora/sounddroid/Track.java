@@ -1,12 +1,19 @@
 package com.fayimora.sounddroid;
 
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by fayimora on 15/03/2016.
  */
 public class Track {
+  @SerializedName("id")
   private int id;
+
+  @SerializedName("title")
   private String title;
+
+  @SerializedName("stream_url")
   private String streamUrl;
 
   public int getId() {
