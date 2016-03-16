@@ -2,11 +2,14 @@ package com.fayimora.sounddroid;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
   static String TAG = "MainActivity";
 
   SoundCloudService service = SoundCloud.getService();
+  private List<Track> tracks;
+  TracksAdapter tracksAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +30,24 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    service.searchSongs("7 years").clone().enqueue(new Callback<List<Track>>() {
+    tracks = new ArrayList<>();
+    tracksAdapter = new TracksAdapter(tracks);
+
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.songs_list);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    recyclerView.setAdapter(tracksAdapter);
+
+    service.searchSongs("call").clone().enqueue(new Callback<List<Track>>() {
       @Override
       public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
         if (response.isSuccessful()) {
-          List<Track> tracks = response.body();
-          Log.d(TAG, "Track title is " + tracks.get(0).getTitle());
+          tracks.clear();
+          tracks.addAll(response.body());
+          tracksAdapter.notifyDataSetChanged();
+
         } else {
           Log.e(TAG, response.message());
+          Log.e(TAG, response.code()+"");
         }
       }
 
