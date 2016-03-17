@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.setAdapter(tracksAdapter);
 
-    service.searchSongs("call").clone().enqueue(new Callback<List<Track>>() {
+    service.searchSongs("call", 20).clone().enqueue(new Callback<List<Track>>() {
       @Override
       public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
         if (response.isSuccessful()) {
