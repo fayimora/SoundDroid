@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     tracks = new ArrayList<>();
-    tracksAdapter = new TracksAdapter(tracks);
+    tracksAdapter = new TracksAdapter(this, tracks);
 
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.songs_list);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
           tracks.clear();
           tracks.addAll(response.body());
           tracksAdapter.notifyDataSetChanged();
-
+          //Log.d(TAG, "track 1 avatar URL: " + tracks.get(0).getArtworkUrl());
         } else {
           Log.e(TAG, response.message());
           Log.e(TAG, response.code()+"");

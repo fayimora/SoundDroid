@@ -1,11 +1,14 @@
 package com.fayimora.sounddroid;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -26,8 +29,10 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
   }
 
   private List<Track> tracks;
-  TracksAdapter(List<Track> tracks){
+  private Context context;
+  TracksAdapter(Context context, List<Track> tracks){
     this.tracks = tracks;
+    this.context = context;
   }
 
   @Override
@@ -39,6 +44,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
   public void onBindViewHolder(ViewHolder holder, int position) {
     String title = tracks.get(position).getTitle();
     holder.titleTextView.setText(title);
+    Picasso.with(context).load(tracks.get(position).getArtworkUrl()).into(holder.thumbnailImageView);
   }
 
   @Override

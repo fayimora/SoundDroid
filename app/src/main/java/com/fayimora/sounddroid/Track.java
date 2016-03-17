@@ -16,27 +16,25 @@ public class Track {
   @SerializedName("stream_url")
   private String streamUrl;
 
+  @SerializedName("artwork_url")
+  private String artworkUrl;
+
   public int getId() {
     return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public String getStreamUrl() {
     return streamUrl;
   }
 
-  public void setStreamUrl(String streamUrl) {
-    this.streamUrl = streamUrl;
-  }
-
   public String getTitle() {
     return title;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public String getArtworkUrl() {
+    String avatarUrl = artworkUrl;
+    if(avatarUrl != null)
+      avatarUrl = artworkUrl.replace("large", "tiny");
+    return avatarUrl;
   }
 }
