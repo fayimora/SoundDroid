@@ -1,5 +1,6 @@
 package com.fayimora.sounddroid;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
   SoundCloudService service = SoundCloud.getService();
   private List<Track> tracks;
   TracksAdapter tracksAdapter;
+  private TextView selectedTitleView;
+  private ImageView selectedThumbnailView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    Toolbar playerToolbar = (Toolbar) findViewById(R.id.player_toolbar);
+    final Toolbar playerToolbar = (Toolbar) findViewById(R.id.player_toolbar);
+    selectedTitleView = (TextView) findViewById(R.id.selected_title);
+    selectedThumbnailView = (ImageView) findViewById(R.id.selected_thumbnail);
 
     tracks = new ArrayList<>();
     tracksAdapter = new TracksAdapter(this, tracks);
@@ -38,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.songs_list);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.setAdapter(tracksAdapter);
+
+    tracksAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Track selectedTrack = tracks.get(position);
+        selectedTitleView.setText(selectedTrack.getTitle());
+        Picasso.with(MainActivity.this).load(selectedTrack.getArtworkUrl()).into(selectedThumbnailView);
+      }
+    });
 
     service.searchSongs("call", 20).clone().enqueue(new Callback<List<Track>>() {
       @Override
