@@ -18,7 +18,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -99,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    service.searchSongs("call", 20).enqueue(new Callback<List<Track>>() {
+    String date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+    service.getRecentSongs(date).enqueue(new Callback<List<Track>>() {
       @Override
       public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
         if (response.isSuccessful()) {
