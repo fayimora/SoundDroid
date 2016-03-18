@@ -1,5 +1,6 @@
 package com.fayimora.sounddroid;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
   TracksAdapter tracksAdapter;
   private TextView selectedTitleView;
   private ImageView selectedThumbnailView;
+  protected MediaPlayer mediaPlayer;
+  private ImageView playerStateView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,22 @@ public class MainActivity extends AppCompatActivity {
     final Toolbar playerToolbar = (Toolbar) findViewById(R.id.player_toolbar);
     selectedTitleView = (TextView) findViewById(R.id.selected_title);
     selectedThumbnailView = (ImageView) findViewById(R.id.selected_thumbnail);
+    playerStateView = (ImageView) findViewById(R.id.player_state);
+    playerStateView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        toggleSongState();
+      }
+    });
+
+    mediaPlayer = new MediaPlayer();
+    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+      @Override
+      public void onPrepared(MediaPlayer mp) {
+        toggleSongState();
+      }
+    });
 
     tracks = new ArrayList<>();
     tracksAdapter = new TracksAdapter(this, tracks);
@@ -56,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
         Track selectedTrack = tracks.get(position);
         selectedTitleView.setText(selectedTrack.getTitle());
         Picasso.with(MainActivity.this).load(selectedTrack.getArtworkUrl()).into(selectedThumbnailView);
+        try {
+          Log.d(TAG, "PLaying: "+selectedTrack.getStreamUrl());
+          mediaPlayer.setDataSource(selectedTrack.getStreamUrl()+"?client_id="+SoundCloudService.CLIENT_ID);
+          mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+          Log.e(TAG, e.getMessage());
+          e.printStackTrace();
+        }
       }
     });
 
@@ -78,6 +106,16 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, t.getMessage());
       }
     });
+  }
+
+  private void toggleSongState() {
+    if(mediaPlayer.isPlaying()) {
+      mediaPlayer.pause();
+      playerStateView.setImageResource(R.drawable.ic_play);
+    } else {
+      mediaPlayer.start();
+      playerStateView.setImageResource(R.drawable.ic_pause);
+    }
   }
 
   @Override
