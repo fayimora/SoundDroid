@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    service.searchSongs("call", 20).clone().enqueue(new Callback<List<Track>>() {
+    service.searchSongs("call", 20).enqueue(new Callback<List<Track>>() {
       @Override
       public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
         if (response.isSuccessful()) {
