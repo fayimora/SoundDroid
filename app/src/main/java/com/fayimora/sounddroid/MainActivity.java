@@ -56,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
     mediaPlayer = new MediaPlayer();
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+      @Override
+      public void onCompletion(MediaPlayer mp) {
+        playerStateView.setImageResource(R.drawable.ic_play);
+      }
+    });
     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
       @Override
       public void onPrepared(MediaPlayer mp) {
