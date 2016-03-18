@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+    Toolbar playerToolbar = (Toolbar) findViewById(R.id.player_toolbar);
+
     tracks = new ArrayList<>();
     tracksAdapter = new TracksAdapter(this, tracks);
 
