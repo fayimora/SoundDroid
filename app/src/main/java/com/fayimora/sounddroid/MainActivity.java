@@ -76,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         Track selectedTrack = tracks.get(position);
         selectedTitleView.setText(selectedTrack.getTitle());
         Picasso.with(MainActivity.this).load(selectedTrack.getArtworkUrl()).into(selectedThumbnailView);
+
+        if(mediaPlayer.isPlaying()){
+          mediaPlayer.stop();
+          mediaPlayer.reset();
+        }
+
         try {
           Log.d(TAG, "PLaying: "+selectedTrack.getStreamUrl());
           mediaPlayer.setDataSource(selectedTrack.getStreamUrl()+"?client_id="+SoundCloudService.CLIENT_ID);
