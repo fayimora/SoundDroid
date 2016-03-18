@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -26,7 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
   static String TAG = "MainActivity";
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
   private ImageView selectedThumbnailView;
   protected MediaPlayer mediaPlayer;
   private ImageView playerStateView;
+  private SearchView searchView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -105,15 +107,7 @@ public class MainActivity extends AppCompatActivity {
     service.getRecentSongs(date).enqueue(new Callback<List<Track>>() {
       @Override
       public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
-        if (response.isSuccessful()) {
-          tracks.clear();
-          tracks.addAll(response.body());
-          tracksAdapter.notifyDataSetChanged();
-          //Log.d(TAG, "track 1 avatar URL: " + tracks.get(0).getArtworkUrl());
-        } else {
-          Log.e(TAG, response.message());
-          Log.e(TAG, response.code()+"");
-        }
+        updateTracks(response);
       }
 
       @Override
@@ -121,6 +115,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, t.getMessage());
       }
     });
+  }
+
+  private void updateTracks(Response<List<Track>> response) {
+    if (response.isSuccessful()) {
+      tracks.clear();
+      tracks.addAll(response.body());
+      tracksAdapter.notifyDataSetChanged();
+      //Log.d(TAG, "track 1 avatar URL: " + tracks.get(0).getArtworkUrl());
+    } else {
+      Log.e(TAG, response.message());
+      Log.e(TAG, response.code()+"");
+    }
   }
 
   private void toggleSongState() {
@@ -149,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_main, menu);
+    searchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
+    searchView.setOnQueryTextListener(this);
     return true;
   }
 
@@ -165,5 +173,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public boolean onQueryTextSubmit(String query) {
+    Log.d(TAG, query);
+    //searchView.clearFocus();
+    SoundCloud.getService().searchSongs(query, 50).enqueue(new Callback<List<Track>>() {
+      @Override
+      public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
+        updateTracks(response);
+      }
+
+      @Override
+      public void onFailure(Call<List<Track>> call, Throwable t) {
+
+      }
+    });
+    return true;
+  }
+
+  @Override
+  public boolean onQueryTextChange(String newText) {
+    return false;
   }
 }
